@@ -17,7 +17,7 @@ module.exports = (C, lang) => {
 		]],
 		[ loc.time, [
 			`${loc.turned}: ${new Date(C.api.startTime).toLocaleString('ru-RU', {timezone: 'Europe/Moscow', hour12: false})} MSK`,
-			`${loc.uptime}: ${Math.round(uptime / (1000 * 60 * 60))}h, ${Math.floor(uptime / (1000 * 60)) % 60}m`,
+			`${loc.uptime}: ${Math.floor(uptime / (1000 * 60 * 60))}h, ${Math.floor(uptime / (1000 * 60)) % 60}m`,
 		]]
 	]
 	let embed = new Eris.Embed()
