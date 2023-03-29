@@ -1,0 +1,73 @@
+{
+	"error": {
+		"inv_cmd": "Invalid command provided.",
+		"adm_cmd": "You can't execute admin commands!",
+		"cmd_run": "This command cannot be executed now.",
+		"not_suc": "An error was occured which already sent to creator.",
+		"unk_err": "Unknown error.",
+		"req_err": "Request error."
+	},
+	"cmds": {
+		"eval": {
+			"options": {
+				"code": ["code", "Code itself"]
+			},
+			"desc": "Executes code (private)",
+			"succ": "Success",
+			"err": "Error"
+		},
+		"shell": {
+			"options": {
+				"code": ["code", "Code itself"]
+			},
+			"desc": "Executes code in Unix shell (private)"
+		},
+		"color": {
+			"options": {
+				"color": ["color", "Examples: 00fff0, Aqua"]
+			},
+			"iscol": "Color",
+			"isntcol": "Isn't color",
+			"name": "color",
+			"desc": "Shows information about color"
+		},
+		"keyboard-translator": {
+			"name": "Keyboard translator"
+		},
+		"note": {
+			"options": {
+				 "id": ["id", "Identifier of note"],
+				 "text": ["text", "Text of note"],
+				 "short": ["short", "Short note text"],
+				"list": ["list", "List of notes"],
+				"show": ["show", "Show note"],
+				"add": ["add", "Add note"],
+				"edit": ["edit", "Edit note"],
+				"delete": ["delete", "Delete note"],
+				"purge": ["purge", "Delete all notes"]
+			},
+			"nothing": "You have no notes",
+			"missing": "Note doesn't exists",
+			"created": "Created note",
+			"updated": "Updated note",
+			"deleted": "Deleted note",
+			"sure": "Are you sure?",
+			"purged": "Deleted all notes",
+			"name": "note",
+			"desc": "Notes storage"
+		},
+		"info": {
+			 "ping": "Ping",
+			 "ram": "RAM",
+			 "mb": "MB",
+			 "cpu": "CPU",
+			 "turned": "Turned on",
+			 "uptime": "Uptime",
+			"latency": "Latency",
+			"time": "Time",
+			"cmds": "Commands",
+			"name": "info",
+			"desc": "Shows bot information"
+		}
+	}
+}
