@@ -68,6 +68,16 @@
 			"cmds": "Commands",
 			"name": "info",
 			"desc": "Shows bot information"
+		},
+		"rub": {
+			"options": {
+				"valutes": ["valutes", "List of valutes divided with spaces or commas"]
+			},
+			"curr": "Currency rate at ",
+			"notf": "\nNot found: ",
+			"prov": "\nData provided by central bank of Russia.",
+			"name": "rub",
+			"desc": "Ruble course"
 		}
 	}
 }

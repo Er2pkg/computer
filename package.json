@@ -12,6 +12,8 @@
     "cpuse": "^1.1.3",
     "eris": "github:DonovanDMC/eris#9c4abe15c3aac729894fd9926345357a9f152419",
     "mongoose": "^7.0.3",
-    "rgbcolor": "^1.0.1"
+    "rgbcolor": "^1.0.1",
+    "windows-1251": "^1.1.0",
+    "xml-js": "^1.6.11"
   }
 }

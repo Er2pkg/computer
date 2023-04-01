@@ -14,6 +14,7 @@ module.exports = {
 		'keyboard-translator',
 		'note',
 		'info',
+		'rub',
 	],
 	events: [
 		'ready',

@@ -39,9 +39,13 @@ let parseOptions = (opts, C, k) => {
 	}
 }
 
+let cmds = 0
 module.exports = (C, api) => {
-	if (!C.stats.cmds) {
+	if (!C.stats.cmds)
 		C.load('cmds')
+
+	if (cmds != C.stats.cmds) {
+		cmds = C.stats.cmds
 
 		// Register commands
 		let a = []
@@ -54,13 +58,15 @@ module.exports = (C, api) => {
 				descriptionLocalizations: {},
 				options: v.options,
 			}
-			if (v.options) parseOptions(v.options, C, k)
+			if (v.options && !v._rd)
+				parseOptions(v.options, C, k)
 			for (let lang of C.locale.list) {
 				let cmd = C.locale.get('cmds', k, lang)
 				b.nameLocalizations[lang] = cmd.name || k
 				if (!v.messagecmd) b.descriptionLocalizations[lang] = cmd.desc || C.locale.get('cmds', 'not_des', lang)
 			}
 			if (!v.messagecmd) b.description = b.descriptionLocalizations[C.locale.main]
+			v._rd = true
 			a.push(b)
 		}
 

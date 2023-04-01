@@ -33,14 +33,14 @@ class Core {
 	}
 
 	reload(category, target, off) {
+		console.log('Reloading ' + target + (off ? ' (off)' : ''))
 		let tgt = require.resolve('../' + category +'/' + target)
-		console.log(tgt)
 		let cache = require.cache[tgt]
 		if (cache && category == 'events')
-			this.api.off(cache)
+			this.api.off(target, cache)
 		if (cache) delete require.cache[tgt]
-		if (off) return
-		this._load(category, target)
+		if (!off)
+			this._load(category, target)
 	}
 
 	_load(cat, v) {
