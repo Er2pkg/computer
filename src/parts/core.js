@@ -26,15 +26,33 @@ class Core {
 			let v = wh[i]
 			console.log('Loading ' + what.slice(0, -1) + ' (' +(parseInt(i)+1)+' / '+wh.length + ') ' + v + '...')
 
+			this._load(what, v)
+		}
+		console.log('Loaded ' + wh.length +' '+ what)
+		this.stats.loaded = Date.now()
+	}
+
+	reload(category, target, off) {
+		let tgt = require.resolve('../' + category +'/' + target)
+		console.log(tgt)
+		let cache = require.cache[tgt]
+		if (cache && category == 'events')
+			this.api.off(cache)
+		if (cache) delete require.cache[tgt]
+		if (off) return
+		this._load(category, target)
+	}
+
+	_load(cat, v) {
 			try {
-				let res = require('../' + what +'/'+ v)
-				switch (what) {
+				let res = require('../' + cat +'/'+ v)
+				switch (cat) {
 				case 'events':
 					this.api.on(v, res.bind(this, this, this.api))
 					break
 				case 'cmds':
+					if (!this.cmds[v]) this.stats.cmds++
 					this.cmds[v] = res
-					this.stats.cmds++
 					break
 				case 'parts':
 					res(this)
@@ -49,9 +67,6 @@ class Core {
 				console.log(err)
 				console.log('failed')
 			}
-		}
-		console.log('Loaded ' + wh.length +' '+ what)
-		this.stats.loaded = Date.now()
 	}
 }
 

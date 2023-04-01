@@ -102,7 +102,7 @@ module.exports = {
 			//msg.createMessage({content: msg.loc.sure, flags: ephemeral})
 			db.notes = []
 			await db.save()
-			msg.createMessage({content: msg.loc.purged +' '+ id, flags: ephemeral})
+			msg.createMessage({content: msg.loc.purged, flags: ephemeral})
 			break
 		}
 	}

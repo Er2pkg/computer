@@ -16,7 +16,7 @@ module.exports = (C, lang) => {
 			`${C.stats.cmds}`
 		]],
 		[ loc.time, [
-			`${loc.turned}: ${new Date(C.api.startTime).toLocaleString('ru-RU', {timezone: 'Europe/Moscow', hour12: false})} MSK`,
+			`${loc.turned}: ${new Date(C.stats.loaded).toLocaleString('ru-RU', {timezone: 'Europe/Moscow', hour12: false})} MSK`,
 			`${loc.uptime}: ${Math.floor(uptime / (1000 * 60 * 60))}h, ${Math.floor(uptime / (1000 * 60)) % 60}m`,
 		]]
 	]

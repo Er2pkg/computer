@@ -7,9 +7,13 @@ module.exports = (C) => {
 	setInterval(() => {
 		if (!C.api.startTime) return
 
-		C.api.editMessage(C.config.stats.channel, C.config.stats.message,
-			{embed: C.info(C, 'ru')}
-		)
+		try {
+			C.api.editMessage(C.config.stats.channel, C.config.stats.message,
+				{embed: C.info(C, 'ru')}
+			)
+		} catch (err) {
+			console.log(err)
+		}
 	}, 15000)
 }
 
