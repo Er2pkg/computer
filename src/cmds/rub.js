@@ -33,15 +33,15 @@ class Rub {
 		})
 
 		let res = [], founds
-		if (wants.includes('ALL')) {
+		if (wants.has('ALL')) {
 			founds = wants
 			for (let v of dat.Valute)
 				res.push(this.getPat(v))
 		} else {
-			founds = []
+			founds = new Set()
 			for (let v of dat.Valute)
-				if (wants.includes(v.CharCode._text)) {
-					founds.push(v.CharCode._text)
+				if (wants.has(v.CharCode._text)) {
+					founds.add(v.CharCode._text)
 					res.push(this.getPat(v))
 				}
 		}
@@ -49,6 +49,7 @@ class Rub {
 		return [res, dat._attributes.Date, founds]
 	}
 }
+// как новый рубль?
 let rub = new Rub
 
 module.exports = {
@@ -58,14 +59,19 @@ module.exports = {
 		}
 	],
 	run: async (C, msg) => {
-		let wants = [
+		let wants = new Set([
 			'USD',
 			'EUR',
-			...msg.args[0].value.split(/[,\s]+/).map(i => i.toUpperCase())
-		]
+		])
+		if (msg.args[0])
+			msg.args[0].value
+			.split(/[,\s]+/)
+			.forEach(i => wants.add(i.toUpperCase()))
 		try {
 			let [res, date, founds] = await rub.rate(wants)
-			let nf = wants.filter(i => !founds.includes(i))
+			let nf = []
+			for (let i of wants)
+				if (!founds.has(i)) nf.push(i)
 			let out = msg.loc.curr + date +':\n' + res.join('\n')
 			if (nf.length) out += msg.loc.notf + nf.join(', ')
 			out += msg.loc.prov

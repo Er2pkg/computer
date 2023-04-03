@@ -16,13 +16,13 @@ module.exports = (C, api, interaction) => {
 		else {
 			interaction.args = interaction.data.options || []
 			interaction.loc = C.locale.get('cmds', interaction.data.name, l)
-			try { cmd.run(C, interaction, owner) }
-			catch (err) {
+			cmd.run(C, interaction, owner)
+			.catch(err => {
 				console.log(err)
 				api.getDMChannel(C.config.owner)
 					.then(ch => ch.createMessage({content: err}))
 				interaction.createMessage({content: C.locale.get('error', 'not_suc', l), flags: ephemeral})
-			}
+			})
 		}
 		break
 	}

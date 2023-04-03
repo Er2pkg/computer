@@ -6,7 +6,7 @@ module.exports = {
 			required: true
 		}
 	],
-	run: (C, msg) => {
+	run: async (C, msg) => {
 		const col = new rgbcolor(msg.args[0].value.toLowerCase())
 		msg.createMessage({embed: new Eris.Embed()
 			.author((col.ok ? msg.loc.iscol : msg.loc.isntcol) +' '+ msg.args[0].value, C.api.user.dynamicAvatarURL('webp'))

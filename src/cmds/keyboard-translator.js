@@ -3,7 +3,7 @@ const rus = "йцукенгшщзхъфывапролджэячсмитьбю."
 
 module.exports = {
 	messagecmd: true,
-	run: (C, msg) => {
+	run: async (C, msg) => {
 		msg.data.resolved.messages.forEach(m => {
 			if (!m.content.length)
 				return msg.createMessage({content: C.locale.get('error', 'req_err', msg.locale), flags: ephemeral})
