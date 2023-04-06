@@ -14,6 +14,8 @@ module.exports = (C, api, interaction) => {
 		else if (cmd.private && !owner)
 			interaction.createMessage({content: C.locale.get('error', 'adm_cmd', l), flags: ephemeral})
 		else {
+			C.stats.uses++
+			C.stats.used[interaction.data.name]++
 			interaction.args = interaction.data.options || []
 			interaction.loc = C.locale.get('cmds', interaction.data.name, l)
 			cmd.run(C, interaction, owner)

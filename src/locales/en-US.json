@@ -57,10 +57,13 @@
 			"desc": "Notes storage"
 		},
 		"info": {
+			 "bot": "Bot ",
 			 "ping": "Ping",
 			 "ram": "RAM",
 			 "mb": "MB",
 			 "cpu": "CPU",
+			 "total": "Total",
+			 "uses": "Uses",
 			 "turned": "Turned on",
 			 "uptime": "Uptime",
 			"latency": "Latency",

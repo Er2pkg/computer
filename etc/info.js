@@ -13,7 +13,8 @@ module.exports = (C, lang) => {
 			`${loc.cpu }: ${C.stats.cpu}`,
 		]],
 		[ loc.cmds, [
-			`${C.stats.cmds}`
+			`${loc.total}: ${C.stats.cmds}`,
+			`${loc.uses }: ${C.stats.uses}`,
 		]],
 		[ loc.time, [
 			`${loc.turned}: ${new Date(C.stats.loaded).toLocaleString('ru-RU', {timezone: 'Europe/Moscow', hour12: false})} MSK`,
@@ -21,9 +22,9 @@ module.exports = (C, lang) => {
 		]]
 	]
 	let embed = new Eris.Embed()
-		.title('Bot ' + C.api.user.username +'#'+ C.api.user.discriminator)
+		.title(loc.bot + C.api.user.username +'#'+ C.api.user.discriminator)
 		.thumbnail(C.api.user.dynamicAvatarURL('webp'))
-		.color(C.beta ? '7289DA' : '00fff0')
+		.color('0081F6')
 	info
 		.map(i => [i[0], '> ' + i[1].join('\n> ')])
 		.forEach(i => embed.field(i[0], i[1]))

@@ -6,6 +6,8 @@ class Core {
 		cpu: 0,
 		loaded: 0,
 		cmds: 0,
+		uses: 0,
+		used: {},
 	}
 
 	constructor() {
@@ -53,6 +55,7 @@ class Core {
 				case 'cmds':
 					if (!this.cmds[v]) this.stats.cmds++
 					this.cmds[v] = res
+					this.stats.used[v] = 0
 					break
 				case 'parts':
 					res(this)
