@@ -1,6 +1,7 @@
-let request = require('../../etc/request')
-let win1251 = require('windows-1251')
-let xmljs   = require('xml-js')
+import request  from '../../etc/request.js'
+import {xml2js} from 'xml-js'
+import {decode} from 'windows-1251'
+
 class Rub {
 	url = 'https://www.cbr.ru/scripts/XML_daily.asp'
 
@@ -10,7 +11,7 @@ class Rub {
 
 	async rate(wants) {
 		let raw = await request(this.url)
-		let dat = xmljs.xml2js(win1251.decode(raw), {compact: true})
+		let dat = xml2js(decode(raw), {compact: true})
 		dat = dat.ValCurs
 		if (!dat) throw 'err'
 
@@ -52,7 +53,7 @@ class Rub {
 // как новый рубль?
 let rub = new Rub
 
-module.exports = {
+export default {
 	options: [
 		{ type: 'string',
 			name: 'valutes'
@@ -77,7 +78,7 @@ module.exports = {
 			out += msg.loc.prov
 			msg.createMessage(out)
 		} catch (err) {
-			msg.createMessage({content: C.locale.get('error', 'req_err', msg.locale), flags: ephemeral})
+			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
 			console.log(err)
 		}
 	}

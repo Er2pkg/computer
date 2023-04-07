@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'node:fs'
 
 class Locale {
 	list = [
@@ -34,7 +34,7 @@ class Locale {
 	}
 }
 
-module.exports = (C) => {
+export default (C) => {
 	C.locale = new Locale()
 }
 

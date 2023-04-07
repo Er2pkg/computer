@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	options: [
 		{ type: 'command',
 			name: 'list',
@@ -62,13 +62,13 @@ module.exports = {
 		let id, name, text, note
 		switch(msg.args[0].name) {
 		case 'list':
-			if (notes.length < 1) return msg.createMessage({content: msg.loc.nothing, flags: ephemeral})
-			msg.createMessage({content: notes.map((i, k) => `${k+1} (${i.name})`).join('\n'), flags: ephemeral})
+			if (notes.length < 1) return msg.createEphemeral(msg.loc.nothing)
+			msg.createEphemeral(notes.map((i, k) => `${k+1} (${i.name})`).join('\n'))
 			break
 		case 'show':
 			id = msg.args[0].options[0].value
 			note = notes[id-1]
-			if (!note) return msg.createMessage({content: msg.loc.missing, flags: ephemeral})
+			if (!note) return msg.createEphemeral(msg.loc.missing)
 			msg.createMessage(note.text)
 			break
 		case 'add':
@@ -77,32 +77,31 @@ module.exports = {
 			id = notes.length + 1
 			notes.push({name, text})
 			await db.save()
-			msg.createMessage({content: msg.loc.created +' '+ id, flags: ephemeral})
+			msg.createEphemeral(msg.loc.created +' '+ id)
 			break
 		case 'edit':
 			id = msg.args[0].options[0].value
 			text = msg.args[0].options[1].value
 			name = msg.args[0].options[2]?.value || text.slice(0, 10)+'...'
 			note = notes[id - 1]
-			if (!note) return msg.createMessage({content: msg.loc.missing, flags: ephemeral})
+			if (!note) return msg.createEphemeral(msg.loc.missing)
 			note.name = name
 			note.text = text
 			await db.save()
-			msg.createMessage({content: msg.loc.updated +' '+ id, flags: ephemeral})
+			msg.createEphemeral(msg.loc.updated +' '+ id)
 			break
 		case 'delete':
 			id = msg.args[0].options[0].value
 			note = notes[id - 1]
-			if (!note) return msg.createMessage({content: msg.loc.missing, flags: ephemeral})
+			if (!note) return msg.createEphemeral(msg.loc.missing)
 			notes.splice(id - 1, 1)
 			await db.save()
-			msg.createMessage({content: msg.loc.deleted +' '+ id, flags: ephemeral})
+			msg.createEphemeral(msg.loc.deleted +' '+ id)
 			break
 		case 'purge':
-			//msg.createMessage({content: msg.loc.sure, flags: ephemeral})
 			db.notes = []
 			await db.save()
-			msg.createMessage({content: msg.loc.purged, flags: ephemeral})
+			msg.createEphemeral(msg.loc.purged)
 			break
 		}
 	}

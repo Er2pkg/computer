@@ -40,7 +40,7 @@ let parseOptions = (opts, C, k) => {
 }
 
 let cmds = 0
-module.exports = (C, api) => {
+export default (C, api) => {
 	if (!C.stats.cmds)
 		C.load('cmds')
 

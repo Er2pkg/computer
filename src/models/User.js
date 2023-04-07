@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	id: String,
 	AFK: {
 		isAFK: {type: Boolean, default: false},

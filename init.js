@@ -1,2 +1,2 @@
-require('./src/parts/core')
+import './src/parts/core.js'
 

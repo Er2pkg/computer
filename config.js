@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	token: process.env.TokenBot,
 	dbtoken: process.env.TokenMongoDB,
 

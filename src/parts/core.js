@@ -1,5 +1,7 @@
+import config from '../../config.js'
+
 class Core {
-	config = require('../../config.js')
+	config = config
 	cmds = {}
 	models = {}
 	stats = {
@@ -22,32 +24,14 @@ class Core {
 		console.log('Uptime:', Date.now() - this.loaded, 'seconds')
 	}
 
-	load(what) {
-		let wh = this.config[what]
+	async load(cat) {
+		let wh = this.config[cat]
 		for (let i in wh) {
 			let v = wh[i]
-			console.log('Loading ' + what.slice(0, -1) + ' (' +(parseInt(i)+1)+' / '+wh.length + ') ' + v + '...')
+			console.log('Loading ' + cat.slice(0, -1) + ' (' +(parseInt(i)+1)+' / '+wh.length + ') ' + v + '...')
 
-			this._load(what, v)
-		}
-		console.log('Loaded ' + wh.length +' '+ what)
-		this.stats.loaded = Date.now()
-	}
-
-	reload(category, target, off) {
-		console.log('Reloading ' + target + (off ? ' (off)' : ''))
-		let tgt = require.resolve('../' + category +'/' + target)
-		let cache = require.cache[tgt]
-		if (cache && category == 'events')
-			this.api.off(target, cache)
-		if (cache) delete require.cache[tgt]
-		if (!off)
-			this._load(category, target)
-	}
-
-	_load(cat, v) {
 			try {
-				let res = require('../' + cat +'/'+ v)
+				let res = (await import('../' + cat +'/'+ v + '.js')).default
 				switch (cat) {
 				case 'events':
 					this.api.on(v, res.bind(this, this, this.api))
@@ -55,7 +39,6 @@ class Core {
 				case 'cmds':
 					if (!this.cmds[v]) this.stats.cmds++
 					this.cmds[v] = res
-					this.stats.used[v] = 0
 					break
 				case 'parts':
 					res(this)
@@ -67,9 +50,12 @@ class Core {
 					throw new Error('wut?')
 				}
 			} catch (err) {
-				console.log(err)
 				console.log('failed')
+				console.log(err)
 			}
+		}
+		console.log('Loaded ' + wh.length +' '+ cat)
+		this.stats.loaded = Date.now()
 	}
 }
 

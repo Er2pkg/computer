@@ -1,12 +1,12 @@
 const eng = "qwertyuiop[]asdfghjkl;'zxcvbnm,./"
 const rus = "йцукенгшщзхъфывапролджэячсмитьбю."
 
-module.exports = {
+export default {
 	messagecmd: true,
 	run: async (C, msg) => {
 		msg.data.resolved.messages.forEach(m => {
 			if (!m.content.length)
-				return msg.createMessage({content: C.locale.get('error', 'req_err', msg.locale), flags: ephemeral})
+				return msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
 			let cont = m.content
 				.split('')
 				.map(i => {

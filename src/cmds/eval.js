@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	private: true,
 	options: [
 		{ type: 'string',
@@ -7,12 +7,12 @@ module.exports = {
 		}
 	],
 	run: async (C, msg, owner) => {
-		await msg.defer(ephemeral)
+		await msg.deferEphemeral()
 		try {
 			const result = eval(msg.args[0].value)
-			msg.createMessage({content: `\`\`\`js\n// ${msg.loc.succ} ✅\n${result}\`\`\``, flags: ephemeral})
+			msg.createEphemeral(`\`\`\`js\n// ${msg.loc.succ} ✅\n${result}\`\`\``)
 		} catch (err) {
-			msg.createMessage({content: `\`\`\`js\n// ${msg.loc.err} ❎\n${err}\`\`\``, flags: ephemeral})
+			msg.createEphemeral(`\`\`\`js\n// ${msg.loc.err} ❎\n${err}\`\`\``)
 		}
 	}
 }

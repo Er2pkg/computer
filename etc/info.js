@@ -1,8 +1,8 @@
 // Information generation
-const os = require('os')
-const cpuse = require('cpuse')
+import os from 'node:os'
+import Embed from './Embed.js'
 
-module.exports = (C, lang) => {
+export default (C, lang) => {
 	const ping = C.api.shards.reduce((i, c) => i + c.latency, 0) / C.api.shards.size
 	const loc = C.locale.get('cmds', 'info', lang)
 	const uptime = Date.now() - C.stats.loaded
@@ -21,8 +21,8 @@ module.exports = (C, lang) => {
 			`${loc.uptime}: ${Math.floor(uptime / (1000 * 60 * 60))}h, ${Math.floor(uptime / (1000 * 60)) % 60}m`,
 		]]
 	]
-	let embed = new Eris.Embed()
-		.title(loc.bot + C.api.user.username +'#'+ C.api.user.discriminator)
+	let embed = new Embed()
+		.title(loc.bot + C.api.user.tag)
 		.thumbnail(C.api.user.dynamicAvatarURL('webp'))
 		.color('0081F6')
 	info

@@ -1,6 +1,6 @@
-const cpuse = require('cpuse')
+import cpuse from 'cpuse'
 
-module.exports = (C) => {
+export default (C) => {
 	setInterval(async () => {
 		C.stats.cpu = await cpuse.usageAvg()
 	}, 5000)

@@ -1,5 +1,6 @@
-let https = require('https')
-module.exports = url => new Promise((res, rej) => {
+import https from 'https'
+
+export default url => new Promise((res, rej) => {
 	https.get(url, R => {
 		R.setEncoding('binary')
 		let s = ''

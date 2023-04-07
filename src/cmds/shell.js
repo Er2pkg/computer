@@ -1,4 +1,6 @@
-module.exports = {
+import {execSync} from 'child_process'
+
+export default {
 	private: true,
 	options: [
 		{ type: 'string',
@@ -7,14 +9,13 @@ module.exports = {
 		}
 	],
 	run: async (C, msg) => {
-		await msg.defer(ephemeral)
-		let result
+		await msg.deferEphemeral()
 		try {
-			result = require('child_process')
-				.execSync(msg.args[0].value)
-				.toString('utf8')
-		} catch (err) { result = err }
-		msg.createMessage({content: `\`\`\`sh\n${result}\`\`\``, flags: ephemeral})
+			let result = execSync(msg.args[0].value).toString('utf8')
+			msg.createEphemeral(`\`\`\`sh\n${result}\`\`\``)
+		} catch (err) {
+			msg.createEphemeral(`\`\`\`\n${err}\`\`\``)
+		}
 	}
 }
 

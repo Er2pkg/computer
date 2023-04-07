@@ -75,5 +75,5 @@ class Embed {
 	}
 }
 
-Eris.Embed = Embed
+export default Embed
 
