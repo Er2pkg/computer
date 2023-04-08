@@ -159,12 +159,12 @@ let renderChart = async (C, msg, wants, date1, date2, days) => {
 			+ date2.toLocaleDateString('ru-RU') + ':'
 		msg.editOriginalMessage({content: out, components: [{type: 1, components: [
 			{ type: 2,
-				label: 'Left',
+				label: '◀️ ' + msg.loc.left,
 				style: 2,
 				custom_id: 'left'
 			},
 			{ type: 2,
-				label: 'Right',
+				label: '▶️ ' + msg.loc.right,
 				style: 2,
 				disabled: date2.toLocaleDateString('ru-RU') == new Date().toLocaleDateString('ru-RU'),
 				custom_id: 'right'

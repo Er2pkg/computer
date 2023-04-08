@@ -16,6 +16,7 @@ export default {
 			name: 'add',
 			options: [
 				{ type: 'string',
+					max_length: 2000,
 					required: true,
 					name: 'text'
 				},
@@ -33,6 +34,7 @@ export default {
 					name: 'id'
 				},
 				{ type: 'string',
+					max_length: 2000,
 					required: true,
 					name: 'text'
 				},

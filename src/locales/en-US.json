@@ -79,6 +79,8 @@
 				"chart": ["chart", "Graph of rate changes"],
 				"now": ["now", "Current ruble rate course"]
 			},
+			"left": "Left",
+			"right": "Right",
 			"curr": "Currency rate at ",
 			"notf": "\nNot found: ",
 			"prov": "\nData provided by central bank of Russia.",
