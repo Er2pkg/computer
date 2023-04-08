@@ -131,7 +131,7 @@ export default {
 				},
 				{ type: 'integer',
 					min_value: 1,
-					max_value: 30,
+					max_value: 365,
 					name: 'days'
 				}
 			]
