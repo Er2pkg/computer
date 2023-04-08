@@ -7,7 +7,6 @@ class Rub {
 	base    = 'https://www.cbr.ru/scripts/'
 	daily   = this.base + 'XML_daily.asp'
 	dynamic = this.base + 'XML_dynamic.asp'
-	//cbr.ru/scripts/XML_dynamic.asp?date_req1=02/03/2001&date_req2=14/03/2001&VAL_NM_RQ=R01235
 
 	getPat(val) {
 		return `${val.Nominal._text} ${val.Name._text} (${val.CharCode._text}) — ${val.Value._text} ₽`
@@ -88,12 +87,15 @@ class Rub {
 					data: [],
 				}) - 1
 				if (v.pseudo == true) {
+					founds.add(v.CharCode._text)
 					for (let x of res.data.labels) res.data.datasets[idx].data.push(v.Value._text)
 					continue
 				}
 				let url = this.dynamic + `?date_req1=${date1}&date_req2=${date2}&VAL_NM_RQ=${v.pseudo || v._attributes.ID}`
 				let dat = xml2js(decode(await request(url)), {compact: true})
 				dat = dat.ValCurs.Record
+				if (!dat) continue
+				founds.add(v.CharCode._text)
 				for (let c of dat) {
 					let i = res.data.labels.findIndex(i => i == c._attributes.Date)
 					if (i < 0) i = res.data.labels.push(c._attributes.Date) - 1
@@ -174,10 +176,11 @@ export default {
 			let nf = []
 			for (let i of wants)
 				if (!founds.has(i)) nf.push(i)
-			//let out = msg.loc.curr + date +':\n' + res.join('\n')
-			//if (nf.length) out += msg.loc.notf + nf.join(', ')
-			//out += msg.loc.prov
-			msg.createMessage('huest', {file: res, name: 'chart.png'})
+			let out = ''
+			if (nf.length) out += msg.loc.notf + nf.join(', ')
+			out += msg.loc.prov + '\n'
+			out += msg.loc.curr + date1 + ' - ' + date2 +':'
+			msg.createMessage(out, {file: res, name: 'chart.png'})
 		} catch (err) {
 			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
 			console.log(err)
