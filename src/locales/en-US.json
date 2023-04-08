@@ -74,7 +74,10 @@
 		},
 		"rub": {
 			"options": {
-				"valutes": ["valutes", "List of valutes divided with spaces or commas"]
+				 "valutes": ["valutes", "List of valutes divided with spaces or commas"],
+				 "days": ["days", "Number of days to show"],
+				"chart": ["chart", "Graph of rate changes"],
+				"now": ["now", "Current ruble rate course"]
 			},
 			"curr": "Currency rate at ",
 			"notf": "\nNot found: ",

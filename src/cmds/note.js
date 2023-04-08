@@ -7,8 +7,8 @@ export default {
 			name: 'show',
 			options: [
 				{ type: 'integer',
-					name: 'id',
-					required: true
+					required: true,
+					name: 'id'
 				}
 			]
 		},
@@ -16,8 +16,8 @@ export default {
 			name: 'add',
 			options: [
 				{ type: 'string',
-					name: 'text',
-					required: true
+					required: true,
+					name: 'text'
 				},
 				{ type: 'string',
 					max_length: 20,
@@ -29,12 +29,12 @@ export default {
 			name: 'edit',
 			options: [
 				{ type: 'integer',
-					name: 'id',
-					required: true
+					required: true,
+					name: 'id'
 				},
 				{ type: 'string',
-					name: 'text',
-					required: true
+					required: true,
+					name: 'text'
 				},
 				{ type: 'string',
 					max_length: 20,
@@ -46,8 +46,8 @@ export default {
 			name: 'delete',
 			options: [
 				{ type: 'integer',
-					name: 'id',
-					required: true
+					required: true,
+					name: 'id'
 				}
 			]
 		},

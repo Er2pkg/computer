@@ -1,38 +1,57 @@
 import request  from '../../etc/request.js'
 import {xml2js} from 'xml-js'
 import {decode} from 'windows-1251'
+import qc       from 'quickchart-js'
 
 class Rub {
-	url = 'https://www.cbr.ru/scripts/XML_daily.asp'
+	base    = 'https://www.cbr.ru/scripts/'
+	daily   = this.base + 'XML_daily.asp'
+	dynamic = this.base + 'XML_dynamic.asp'
+	//cbr.ru/scripts/XML_dynamic.asp?date_req1=02/03/2001&date_req2=14/03/2001&VAL_NM_RQ=R01235
 
 	getPat(val) {
 		return `${val.Nominal._text} ${val.Name._text} (${val.CharCode._text}) — ${val.Value._text} ₽`
 	}
 
-	async rate(wants) {
-		let raw = await request(this.url)
-		let dat = xml2js(decode(raw), {compact: true})
-		dat = dat.ValCurs
-		if (!dat) throw 'err'
-
+	genPseudo(dat) {
 		// Pseudo-valutes
 		dat.Valute.push({
 			NumCode: {_text: '001'},
 			CharCode: {_text: 'RUB'},
 			Nominal: {_text: '1'},
 			Name: {_text: 'Российский рубль'},
-			Value: {_text: '1'},
+			value: v => 1,
+			pseudo: true
 		})
-		let uah = dat.Valute.find(i => i.CharCode._text == 'UAH')
 		dat.Valute.push({
 			NumCode: {_text: '200'},
 			CharCode: {_text: 'SHT'},
 			Nominal: {_text: '1'},
 			Name: {_text: 'Штаны'},
 			// 40 UAH
-			Value: {_text: parseInt(uah.Value._text.replace(',', '.')) / parseInt(uah.Nominal._text) * 40},
+			value: v => parseFloat(v.Value._text) / parseInt(v.Nominal._text) * 40,
+			pseudo: 'R01720'
 		})
 
+	}
+
+	async values() {
+		let dat = xml2js(decode(await request(this.daily)), {compact: true})
+		dat = dat.ValCurs
+		if (!dat) throw 'err'
+		this.genPseudo(dat)
+		for (let v of dat.Valute) {
+			if (v.pseudo) {
+				let val = v.pseudo == true ? null : dat.Valute.find(i => i._attributes.ID == v.pseudo)
+				if (val || v.pseudo == true) v.Value = {_text: v.value(val)}
+				else v.Value = {_text: 0}
+			} else v.Value._text = v.Value._text.replace(',', '.')
+		}
+		return dat
+	}
+
+	async now(wants) {
+		let dat = await this.values()
 		let res = [], founds
 		if (wants.has('ALL')) {
 			founds = wants
@@ -49,27 +68,89 @@ class Rub {
 
 		return [res, dat._attributes.Date, founds]
 	}
+
+	async chart(wants, date1, date2) {
+		let val = await this.values()
+
+		let res = {
+			type: 'line',
+			data: {
+				labels: [],
+				datasets: [],
+			}
+		}
+		let founds = new Set()
+		for (let v of val.Valute)
+			if (wants.has(v.CharCode._text)) {
+				let idx = res.data.datasets.push({
+					label: v.CharCode._text,
+					fill: false,
+					data: [],
+				}) - 1
+				if (v.pseudo == true) {
+					for (let x of res.data.labels) res.data.datasets[idx].data.push(v.Value._text)
+					continue
+				}
+				let url = this.dynamic + `?date_req1=${date1}&date_req2=${date2}&VAL_NM_RQ=${v.pseudo || v._attributes.ID}`
+				let dat = xml2js(decode(await request(url)), {compact: true})
+				dat = dat.ValCurs.Record
+				for (let c of dat) {
+					let i = res.data.labels.findIndex(i => i == c._attributes.Date)
+					if (i < 0) i = res.data.labels.push(c._attributes.Date) - 1
+					c.Value._text = c.Value._text.replace(',', '.')
+					if (v.pseudo) res.data.datasets[idx].data[i] = v.value(c)
+					else res.data.datasets[idx].data[i] = parseFloat(c.Value._text) / parseInt(c.Nominal._text)
+				}
+			}
+		let chart = new qc()
+		chart.setConfig(res)
+		let buf = await chart.toBinary()
+		return [buf, founds]
+	}
 }
 // как новый рубль?
 let rub = new Rub
 
 export default {
 	options: [
-		{ type: 'string',
-			name: 'valutes'
+		{ type: 'command',
+			name: 'now',
+			options: [
+				{ type: 'string',
+					name: 'valutes'
+				}
+			]
+		},
+		{ type: 'command',
+			name: 'chart',
+			options: [
+				{ type: 'string',
+					name: 'valutes'
+				},
+				{ type: 'integer',
+					min_value: 1,
+					max_value: 30,
+					name: 'days'
+				}
+			]
 		}
 	],
 	run: async (C, msg) => {
+		let opts = msg.args[0].options
 		let wants = new Set([
 			'USD',
 			'EUR',
 		])
-		if (msg.args[0])
-			msg.args[0].value
+		let valutes = opts.find(i => i.name == 'valutes')
+		let days = opts.find(i => i.name == 'days')?.value || 7
+		if (valutes)
+			valutes.value
 			.split(/[,\s]+/)
 			.forEach(i => wants.add(i.toUpperCase()))
+		switch(msg.args[0].name) {
+		case 'now':
 		try {
-			let [res, date, founds] = await rub.rate(wants)
+			let [res, date, founds] = await rub.now(wants)
 			let nf = []
 			for (let i of wants)
 				if (!founds.has(i)) nf.push(i)
@@ -80,6 +161,28 @@ export default {
 		} catch (err) {
 			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
 			console.log(err)
+		}
+			break
+		case 'chart':
+		try {
+			await msg.defer()
+			let selection = new Date()
+			selection.setDate(selection.getDate() - days)
+			let date1 = selection.toLocaleDateString('ru-RU')
+			let date2 = (new Date()).toLocaleDateString('ru-RU')
+			let [res, founds] = await rub.chart(wants, date1, date2)
+			let nf = []
+			for (let i of wants)
+				if (!founds.has(i)) nf.push(i)
+			//let out = msg.loc.curr + date +':\n' + res.join('\n')
+			//if (nf.length) out += msg.loc.notf + nf.join(', ')
+			//out += msg.loc.prov
+			msg.createMessage('huest', {file: res, name: 'chart.png'})
+		} catch (err) {
+			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
+			console.log(err)
+		}
+			break
 		}
 	}
 }

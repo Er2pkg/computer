@@ -15,7 +15,6 @@ class Core {
 	constructor() {
 		if (!this.config.token) throw new Error('Provide TokenBot=!')
 		this.load('parts')
-		console.log('Done!')
 	}
 
 	stop() {

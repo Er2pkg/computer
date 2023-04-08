@@ -41,13 +41,10 @@ let parseOptions = (opts, C, k) => {
 
 let cmds = 0
 export default (C, api) => {
-	if (!C.stats.cmds)
-		C.load('cmds')
-
 	if (cmds != C.stats.cmds) {
+		console.log('Registering commands')
 		cmds = C.stats.cmds
 
-		// Register commands
 		let a = []
 		for (let k in C.cmds) {
 			let v = C.cmds[k]
