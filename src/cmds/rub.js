@@ -69,6 +69,8 @@ class Rub {
 	}
 
 	async chart(wants, date1, date2) {
+		date1 = date1.toLocaleDateString('ru-RU')
+		date2 = date2.toLocaleDateString('ru-RU')
 		let val = await this.values()
 
 		let res = {
@@ -84,6 +86,7 @@ class Rub {
 				let idx = res.data.datasets.push({
 					label: v.CharCode._text,
 					fill: false,
+					pointRadius: 0,
 					data: [],
 				}) - 1
 				if (v.pseudo == true) {
@@ -112,6 +115,68 @@ class Rub {
 }
 // как новый рубль?
 let rub = new Rub
+
+let intrCreate = (C, msg, wants, date1, date2, days, m) => {
+	let interaction = intr => {
+		if (intr.type != 3
+			|| !intr.message
+			|| intr.message.id != m.id
+			|| !(intr.member?.user.id == msg.user.id
+				|| intr.user?.id == msg.user.id
+			    )
+		) return
+		intr.deferUpdate()
+		C.api.off('interactionCreate', interaction)
+		switch (intr.data.custom_id) {
+		case 'left':
+			date1.setDate(date1.getDate() - days)
+			date2.setDate(date1.getDate() - days)
+			break
+		case 'right':
+			date1.setDate(date1.getDate() + days)
+			date2.setDate(date1.getDate() + days)
+			break
+		default:
+			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
+			return
+		}
+		renderChart(C, msg, wants, date1, date2, days)
+	}
+	C.api.on('interactionCreate', interaction)
+	setTimeout(() => C.api.off('interactionCreate', interaction), 60_000)
+}
+let renderChart = async (C, msg, wants, date1, date2, days) => {
+	try {
+		let [res, founds] = await rub.chart(wants, date1, date2)
+		let nf = []
+		for (let i of wants)
+			if (!founds.has(i)) nf.push(i)
+		let out = ''
+		if (nf.length) out += msg.loc.notf + nf.join(', ')
+		out += msg.loc.prov + '\n'
+		out += msg.loc.curr
+			+ date1.toLocaleDateString('ru-RU') + ' - '
+			+ date2.toLocaleDateString('ru-RU') + ':'
+		msg.editOriginalMessage({content: out, components: [{type: 1, components: [
+			{ type: 2,
+				label: 'Left',
+				style: 2,
+				custom_id: 'left'
+			},
+			{ type: 2,
+				label: 'Right',
+				style: 2,
+				disabled: date2.toLocaleDateString('ru-RU') == new Date().toLocaleDateString('ru-RU'),
+				custom_id: 'right'
+			}
+		]}], attachments: []}, {file: res, name: 'chart.png'})
+		let m = await msg.getOriginalMessage()
+		intrCreate(C, msg, wants, date1, date2, days, m)
+	} catch (err) {
+		msg.editOriginalMessage(C.locale.get('error', 'req_err', msg.locale))
+		console.log(err)
+	}
+}
 
 export default {
 	options: [
@@ -166,25 +231,11 @@ export default {
 		}
 			break
 		case 'chart':
-		try {
-			await msg.defer()
-			let selection = new Date()
-			selection.setDate(selection.getDate() - days)
-			let date1 = selection.toLocaleDateString('ru-RU')
-			let date2 = (new Date()).toLocaleDateString('ru-RU')
-			let [res, founds] = await rub.chart(wants, date1, date2)
-			let nf = []
-			for (let i of wants)
-				if (!founds.has(i)) nf.push(i)
-			let out = ''
-			if (nf.length) out += msg.loc.notf + nf.join(', ')
-			out += msg.loc.prov + '\n'
-			out += msg.loc.curr + date1 + ' - ' + date2 +':'
-			msg.createMessage(out, {file: res, name: 'chart.png'})
-		} catch (err) {
-			msg.createEphemeral(C.locale.get('error', 'req_err', msg.locale))
-			console.log(err)
-		}
+			await msg.createMessage('Please wait...')
+			let date1 = new Date()
+			let date2 = new Date()
+			date1.setDate(date1.getDate() - days)
+			await renderChart(C, msg, wants, date1, date2, days)
 			break
 		}
 	}
