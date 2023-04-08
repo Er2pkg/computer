@@ -1,5 +1,8 @@
 let Eris = require('eris')
 
+// Why .cjs? Because in ESM eris exports properties as const
+// and consts can't access prototype, so we are using require()
+
 // .tag property
 Object.defineProperty(Eris.User.prototype, 'tag', {
 	get() { return `${this.username}#${this.discriminator}` }

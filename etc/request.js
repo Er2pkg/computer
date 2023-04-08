@@ -1,4 +1,4 @@
-import https from 'https'
+import https from 'node:https'
 
 export default url => new Promise((res, rej) => {
 	https.get(url, R => {
