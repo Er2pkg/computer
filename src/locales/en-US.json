@@ -10,7 +10,8 @@
 	"cmds": {
 		"eval": {
 			"options": {
-				"code": ["code", "Code itself"]
+				"code": ["code", "Code itself"],
+				"public": ["public", "Do not use ephemeral"]
 			},
 			"desc": "Executes code (private)",
 			"succ": "Success",

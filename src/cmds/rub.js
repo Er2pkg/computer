@@ -117,6 +117,10 @@ class Rub {
 let rub = new Rub
 
 let intrCreate = (C, msg, wants, date1, date2, days, m) => {
+	let to = setTimeout(() => {
+		C.api.off('interactionCreate', interaction)
+		renderChart(C, msg, wants, date1, date2, days, true)
+	}, 300_000)
 	let interaction = intr => {
 		if (intr.type != 3
 			|| !intr.message
@@ -127,6 +131,7 @@ let intrCreate = (C, msg, wants, date1, date2, days, m) => {
 		) return
 		intr.deferUpdate()
 		C.api.off('interactionCreate', interaction)
+		clearTimeout(to)
 		switch (intr.data.custom_id) {
 		case 'left':
 			date1.setDate(date1.getDate() - days)
@@ -143,9 +148,8 @@ let intrCreate = (C, msg, wants, date1, date2, days, m) => {
 		renderChart(C, msg, wants, date1, date2, days)
 	}
 	C.api.on('interactionCreate', interaction)
-	setTimeout(() => C.api.off('interactionCreate', interaction), 60_000)
 }
-let renderChart = async (C, msg, wants, date1, date2, days) => {
+let renderChart = async (C, msg, wants, date1, date2, days, nobuttons) => {
 	try {
 		let [res, founds] = await rub.chart(wants, date1, date2)
 		let nf = []
@@ -157,6 +161,8 @@ let renderChart = async (C, msg, wants, date1, date2, days) => {
 		out += msg.loc.curr
 			+ date1.toLocaleDateString('ru-RU') + ' - '
 			+ date2.toLocaleDateString('ru-RU') + ':'
+		if (nobuttons)
+			return msg.editOriginalMessage({content: out, components: []})
 		msg.editOriginalMessage({content: out, components: [{type: 1, components: [
 			{ type: 2,
 				label: '◀️ ' + msg.loc.left,
