@@ -91,7 +91,6 @@ export default (C, api) => {
 			sub[cmd].descriptionLocalizations = sub[cmd].description_localizations
 			a.push(sub[cmd])
 		}
-		console.log(a[3])
 
 		C.api.bulkEditCommands(a)
 	}

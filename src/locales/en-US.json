@@ -15,9 +15,9 @@
 				"code": ["code", "Code itself"],
 				"avail": ["public", "Do not use ephemeral"]
 			},
-			"desc": "Admin commands (private)",
 			"succ": "Success",
-			"err": "Error"
+			"err": "Error",
+			"desc": "Admin commands (private)"
 		},
 		"color": {
 			"options": {
