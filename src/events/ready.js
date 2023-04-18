@@ -1,4 +1,4 @@
-let parseOptions = (opts, C, k) => {
+const parseOptions = (opts, C, k, kk) => {
 	for (let o of opts) {
 		switch(o.type) {
 		case 'command':
@@ -25,9 +25,9 @@ let parseOptions = (opts, C, k) => {
 		o.name_localizations = {}
 		o.description_localizations = {}
 		for (let lang of C.locale.list) {
-			let cmd = C.locale.get('cmds', k, lang)
+			let cmd = C.locale.get('cmds', kk, lang)
+			if (!cmd.options || !cmd.options[o.name]) continue
 			let opt = cmd.options[o.name]
-			if (!opt) continue
 			o.name_localizations[lang] = opt[0]
 			o.description_localizations[lang] = opt[1]
 		}
@@ -35,8 +35,31 @@ let parseOptions = (opts, C, k) => {
 		o.description = o.description_localizations[C.locale.main]
 
 		if ((o.type == 1 || o.type == 2) && o.options) // subcommand and subgroup
-			parseOptions(o.options, C, k)
+			parseOptions(o.options, C, k, kk)
 	}
+}
+const parseCmd = (k, kk, v, C) => {
+	let cmd = {
+		type: v.messagecmd ? 3 : 1,
+		name: k,
+		name_localizations: {},
+		description_localizations: {},
+		options: v.options,
+	}
+	if (v.options && !v._rd)
+		parseOptions(v.options, C, k, kk)
+	v._rd = true
+	for (let lang of C.locale.list) {
+		let loc = C.locale.get('cmds', kk, lang)
+		let locsub = []
+		if (loc && loc.options && loc.options[k]) locsub = loc.options[k]
+		cmd.name_localizations[lang] = locsub[0] || loc.name || k
+		if (!v.messagecmd)
+			cmd.description_localizations[lang] = locsub[1] || loc.desc || ''
+	}
+	if (!v.messagecmd)
+		cmd.description = cmd.description_localizations[C.locale.main]
+	return cmd
 }
 
 let cmds = 0
@@ -45,27 +68,30 @@ export default (C, api) => {
 		console.log('Registering commands')
 		cmds = C.stats.cmds
 
-		let a = []
+		let a = [], sub = {}
 		for (let k in C.cmds) {
 			let v = C.cmds[k]
-			let b = {
-				type: v.messagecmd ? 3 : 1,
-				name: k,
-				nameLocalizations: {},
-				descriptionLocalizations: {},
-				options: v.options,
+			if (k.search('/') > 0) {
+				let [cmd, name] = k.split('/')
+				if (!sub[cmd]) {
+					sub[cmd] = parseCmd(cmd, cmd, {options: []}, C)
+				}
+				sub[cmd].options.push(parseCmd(name, cmd, v, C))
+				continue
 			}
-			if (v.options && !v._rd)
-				parseOptions(v.options, C, k)
-			for (let lang of C.locale.list) {
-				let cmd = C.locale.get('cmds', k, lang)
-				b.nameLocalizations[lang] = cmd.name || k
-				if (!v.messagecmd) b.descriptionLocalizations[lang] = cmd.desc || C.locale.get('cmds', 'not_des', lang)
-			}
-			if (!v.messagecmd) b.description = b.descriptionLocalizations[C.locale.main]
-			v._rd = true
-			a.push(b)
+			let cmd = parseCmd(k, k, v, C)
+			// eris patches
+			cmd.nameLocalizations = cmd.name_localizations
+			cmd.descriptionLocalizations = cmd.description_localizations
+			a.push(cmd)
 		}
+		for (let cmd in sub) {
+			// eris patches
+			sub[cmd].nameLocalizations = sub[cmd].name_localizations
+			sub[cmd].descriptionLocalizations = sub[cmd].description_localizations
+			a.push(sub[cmd])
+		}
+		console.log(a[3])
 
 		C.api.bulkEditCommands(a)
 	}

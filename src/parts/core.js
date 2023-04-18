@@ -9,11 +9,12 @@ class Core {
 		loaded: 0,
 		cmds: 0,
 		uses: 0,
-		used: {},
 	}
 
 	constructor() {
 		if (!this.config.token) throw new Error('Provide TokenBot=!')
+		this.beta = !!process.env.BETA
+		if (this.beta) console.log('Running in beta mode')
 		this.load('parts')
 	}
 

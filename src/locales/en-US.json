@@ -8,20 +8,16 @@
 		"req_err": "Request error."
 	},
 	"cmds": {
-		"eval": {
+		"admin": {
 			"options": {
+				 "eval": ["eval", "Executes JS code"],
+				 "shell": ["shell", "Executes Unix shell code"],
 				"code": ["code", "Code itself"],
-				"public": ["public", "Do not use ephemeral"]
+				"avail": ["public", "Do not use ephemeral"]
 			},
-			"desc": "Executes code (private)",
+			"desc": "Admin commands (private)",
 			"succ": "Success",
 			"err": "Error"
-		},
-		"shell": {
-			"options": {
-				"code": ["code", "Code itself"]
-			},
-			"desc": "Executes code in Unix shell (private)"
 		},
 		"color": {
 			"options": {

@@ -5,7 +5,7 @@ export default (C) => {
 		C.stats.cpu = await cpuse.usageAvg()
 	}, 5000)
 	setInterval(() => {
-		if (!C.api.startTime) return
+		if (!C.api.startTime || C.beta) return
 
 		try {
 			C.api.editMessage(C.config.stats.channel, C.config.stats.message,

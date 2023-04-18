@@ -6,13 +6,14 @@ export default {
 			required: true,
 		},
 		{ type: 'boolean',
-			name: 'public'
+			name: 'avail'
 		}
 	],
 	run: async (C, msg, owner) => {
-		let code = msg.args.find(i => i.name == 'code').value
-		let pub = msg.args.find(i => i.name == 'public')?.value
-		await msg[pub ? 'defer' : 'deferEphemeral']()
+		let {code, avail} = msg.args
+		if (avail)
+			await msg.defer()
+		else await msg.deferEphemeral()
 		try {
 			const result = eval(code)
 			msg.createMessage(`\`\`\`js\n// ${msg.loc.succ} ✅\n${result}\`\`\``)
