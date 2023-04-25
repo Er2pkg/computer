@@ -4,8 +4,8 @@
 		"adm_cmd": "You can't execute admin commands!",
 		"cmd_run": "This command cannot be executed now.",
 		"not_suc": "An error was occured which already sent to creator.",
-		"unk_err": "Unknown error.",
-		"req_err": "Request error."
+		"unk_err": "Unknown error",
+		"req_err": "Request error"
 	},
 	"cmds": {
 		"admin": {
@@ -83,6 +83,18 @@
 			"prov": "\nData provided by central bank of Russia.",
 			"name": "rub",
 			"desc": "Ruble course"
+		},
+		"weather": {
+			"options": {
+				"location": ["location", "Location where to show weather"]
+			},
+			"cid": "City id: ",
+			"temp": "Temperature",
+			"feels": "Feels like",
+			"range": "Range",
+			"humidity": "Humidity",
+			"name": "weather",
+			"desc": "Show current weather forecast"
 		}
 	}
 }

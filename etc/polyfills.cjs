@@ -25,3 +25,9 @@ Eris.CommandInteraction.prototype.deferEphemeral = async function () {
 	await this.defer(64)
 }
 
+// Simplify embed sending
+Eris.CommandInteraction.prototype.createEmbed = function(embed) {
+	if (embed.toJSON) embed = embed.toJSON()
+	this.createMessage({embed})
+}
+

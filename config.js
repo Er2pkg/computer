@@ -11,6 +11,7 @@ export default {
 		'color',
 		'keyboard-translator',
 		'info',
+		'weather',
 		'admin/eval',
 		'admin/shell',
 		'rub/now',
